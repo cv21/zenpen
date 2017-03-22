@@ -17,12 +17,6 @@ ZenPen.editor = (function() {
 
 		createEventBindings();
 
-		// Load state if storage is supported
-		if ( ZenPen.util.supportsHtmlStorage() ) {
-			loadState();
-		} else {
-			loadDefault();
-		}
 		// Set cursor position
 		var range = document.createRange();
 		var selection = window.getSelection();
@@ -33,18 +27,7 @@ ZenPen.editor = (function() {
 	}
 
 	function createEventBindings() {
-
-		// Key up bindings
-		if ( ZenPen.util.supportsHtmlStorage() ) {
-
-			document.onkeyup = function( event ) {
-				checkTextHighlighting( event );
-				saveState();
-			}
-
-		} else {
-			document.onkeyup = checkTextHighlighting;
-		}
+		document.onkeyup = checkTextHighlighting;
 
 		// Mouse bindings
 		document.onmousedown = checkTextHighlighting;
@@ -220,36 +203,6 @@ ZenPen.editor = (function() {
 		return !!nodeList[ name ];
 	}
 
-	function saveState( event ) {
-		
-		localStorage[ 'header' ] = headerField.innerHTML;
-		localStorage[ 'content' ] = contentField.innerHTML;
-	}
-
-	function loadState() {
-
-		if ( localStorage[ 'header' ] ) {
-			headerField.innerHTML = localStorage[ 'header' ];
-		} else {
-			headerField.innerHTML = defaultTitle; // in default.js
-		}
-
-		if ( localStorage[ 'content' ] ) {
-			contentField.innerHTML = localStorage[ 'content' ];
-		} else {
-			loadDefaultContent()
-		}
-	}
-
-	function loadDefault() {
-		headerField.innerHTML = defaultTitle; // in default.js
-		loadDefaultContent();
-	}
-
-	function loadDefaultContent() {
-		contentField.innerHTML = defaultContent; // in default.js
-	}
-
 	function onBoldClick() {
 		document.execCommand( 'bold', false );
 	}
@@ -346,17 +299,6 @@ ZenPen.editor = (function() {
 		window.getSelection().addRange( lastSelection );
 	}
 
-	function getWordCount() {
-		
-		var text = ZenPen.util.getText( contentField );
-
-		if ( text === "" ) {
-			return 0
-		} else {
-			return text.split(/\s+/).length;
-		}
-	}
-
 	function onCompositionStart ( event ) {
 		composing = true;
 	}
@@ -366,9 +308,6 @@ ZenPen.editor = (function() {
 	}
 
 	return {
-		init: init,
-		saveState: saveState,
-		getWordCount: getWordCount
+		init: init
 	}
-
 })();
